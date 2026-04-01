@@ -1,0 +1,35 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ctf
+      POSTGRES_PASSWORD: ctf
+      POSTGRES_DB: ctfdb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ctf -d ctfdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      PORT: "8080"
+      DB_URL: "postgres://ctf:ctf@db:5432/ctfdb?sslmode=disable"
+      JWT_SECRET: "${JWT_SECRET:-changeme}"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:
