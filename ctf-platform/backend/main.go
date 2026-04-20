@@ -60,6 +60,7 @@ func main() {
 			r.Use(middleware.Auth(cfg.JWTSecret))
 			r.Use(middleware.AdminOnly)
 
+			r.Get("/admin/challenges", adminH.ListChallenges)
 			r.Post("/admin/challenges", adminH.CreateChallenge)
 			r.Put("/admin/challenges/{id}", adminH.UpdateChallenge)
 			r.Delete("/admin/challenges/{id}", adminH.DeleteChallenge)

@@ -48,6 +48,41 @@ type UserView struct {
 	CreatedAt  time.Time `db:"created_at"  json:"created_at"`
 }
 
+type ChallengeAdminView struct {
+	ID          int       `db:"id"          json:"id"`
+	Title       string    `db:"title"       json:"title"`
+	Description string    `db:"description" json:"description"`
+	Category    string    `db:"category"    json:"category"`
+	Points      int       `db:"points"      json:"points"`
+	IsVisible   bool      `db:"is_visible"  json:"is_visible"`
+	CreatedAt   time.Time `db:"created_at"  json:"created_at"`
+}
+
+func (s *AdminService) ListChallenges() ([]ChallengeAdminView, error) {
+	rows, err := s.db.Queryx(`
+		SELECT id, title, description, category, points, is_visible, created_at
+		FROM challenges
+		ORDER BY created_at ASC
+	`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var out []ChallengeAdminView
+	for rows.Next() {
+		var ch ChallengeAdminView
+		if err := rows.StructScan(&ch); err != nil {
+			return nil, err
+		}
+		out = append(out, ch)
+	}
+	if out == nil {
+		out = []ChallengeAdminView{}
+	}
+	return out, rows.Err()
+}
+
 func (s *AdminService) CreateChallenge(input CreateChallengeInput) (*models.Challenge, error) {
 	hash, err := utils.HashPassword(input.Flag)
 	if err != nil {

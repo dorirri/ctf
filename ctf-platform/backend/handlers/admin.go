@@ -18,6 +18,15 @@ func NewAdminHandler(svc *services.AdminService) *AdminHandler {
 	return &AdminHandler{svc: svc}
 }
 
+func (h *AdminHandler) ListChallenges(w http.ResponseWriter, r *http.Request) {
+	challenges, err := h.svc.ListChallenges()
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "could not fetch challenges")
+		return
+	}
+	writeJSON(w, http.StatusOK, challenges)
+}
+
 func (h *AdminHandler) CreateChallenge(w http.ResponseWriter, r *http.Request) {
 	var input services.CreateChallengeInput
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
