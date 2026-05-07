@@ -48,7 +48,3 @@ CREATE TABLE IF NOT EXISTS submissions (
 CREATE INDEX IF NOT EXISTS idx_submissions_user        ON submissions(user_id);
 CREATE INDEX IF NOT EXISTS idx_submissions_challenge   ON submissions(challenge_id);
 CREATE INDEX IF NOT EXISTS idx_submissions_correct     ON submissions(user_id, challenge_id) WHERE is_correct = TRUE;
-
-INSERT INTO users (username, email, password_hash, role)
-VALUES ('admin', 'admin@ctf.local', '$2a$10$ieI.Yp/zYvmEQ27cXcleu.o7jYUbgmoJTGWCr34B25ivaGzg/GqnW', 'admin')
-ON CONFLICT DO NOTHING;

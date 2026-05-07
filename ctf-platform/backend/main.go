@@ -46,6 +46,13 @@ func main() {
 	submissionSvc := services.NewSubmissionService(database)
 	scoreboardSvc := services.NewScoreboardService(database)
 	adminSvc := services.NewAdminService(database)
+	if err := adminSvc.EnsureDefaultAdmin(services.DefaultAdminInput{
+		Username: cfg.AdminUsername,
+		Email:    cfg.AdminEmail,
+		Password: cfg.AdminPassword,
+	}); err != nil {
+		log.Fatalf("default admin seed failed: %v", err)
+	}
 
 	authH := handlers.NewAuthHandler(database, cfg.JWTSecret)
 	challengeH := handlers.NewChallengeHandler(challengeSvc)
@@ -60,6 +67,10 @@ func main() {
 	r.Use(chimw.RealIP)
 
 	r.Route("/api", func(r chi.Router) {
+		r.Get("/health", func(w http.ResponseWriter, r *http.Request) {
+			writeHealth(w)
+		})
+
 		r.Route("/auth", func(r chi.Router) {
 			r.Post("/register", authH.Register)
 			r.Post("/login", authH.Login)
@@ -95,6 +106,12 @@ func main() {
 	if err := http.ListenAndServe(addr, r); err != nil {
 		log.Fatalf("server error: %v", err)
 	}
+}
+
+func writeHealth(w http.ResponseWriter) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write([]byte(`{"status":"ok"}`))
 }
 
 func runMigrations(database *sqlx.DB) error {

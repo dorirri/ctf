@@ -15,6 +15,12 @@ func NewAdminService(db *sqlx.DB) *AdminService {
 	return &AdminService{db: db}
 }
 
+type DefaultAdminInput struct {
+	Username string
+	Email    string
+	Password string
+}
+
 type CreateChallengeInput struct {
 	Title       string `json:"title"`
 	Description string `json:"description"`
@@ -217,27 +223,38 @@ func (s *AdminService) ListUsers() ([]UserView, error) {
 	return out, rows.Err()
 }
 
-func (s *AdminService) Seed() error {
+func (s *AdminService) EnsureDefaultAdmin(input DefaultAdminInput) error {
+	if input.Email == "" || input.Password == "" {
+		return nil
+	}
+
 	var exists bool
-	err := s.db.QueryRow(`SELECT EXISTS(SELECT 1 FROM users WHERE email = 'admin@ctf.local')`).Scan(&exists)
+	err := s.db.QueryRow(`SELECT EXISTS(SELECT 1 FROM users WHERE email = $1)`, input.Email).Scan(&exists)
+	if err != nil {
+		return err
+	}
+	if exists {
+		return nil
+	}
+
+	hash, err := utils.HashPassword(input.Password)
 	if err != nil {
 		return err
 	}
 
-	if !exists {
-		hash, err := utils.HashPassword("admin123")
-		if err != nil {
-			return err
-		}
-		_, err = s.db.Exec(`
-			INSERT INTO users (username, email, password_hash, role)
-			VALUES ('admin', 'admin@ctf.local', $1, 'admin')
-		`, hash)
-		if err != nil {
-			return err
-		}
+	username := input.Username
+	if username == "" {
+		username = "admin"
 	}
 
+	_, err = s.db.Exec(`
+		INSERT INTO users (username, email, password_hash, role)
+		VALUES ($1, $2, $3, 'admin')
+	`, username, input.Email, hash)
+	return err
+}
+
+func (s *AdminService) Seed() error {
 	challenges := []struct {
 		title, description, category, flag string
 		points                             int
