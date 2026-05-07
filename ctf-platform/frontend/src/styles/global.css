@@ -179,6 +179,21 @@ a:hover {
   color: #000;
 }
 
+/* ── Admin login standalone page ─────────────────────────────── */
+
+.admin-login-page {
+  min-height: 100vh;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.admin-login-page .form-card {
+  margin: 0;
+}
+
 /* ── Forms ────────────────────────────────────────────────────── */
 
 .form-card {

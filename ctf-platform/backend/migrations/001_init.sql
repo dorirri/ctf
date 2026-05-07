@@ -1,4 +1,7 @@
-CREATE TYPE user_role AS ENUM ('player', 'admin');
+DO $$ BEGIN
+  CREATE TYPE user_role AS ENUM ('player', 'admin');
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 CREATE TABLE IF NOT EXISTS users (
     id            SERIAL PRIMARY KEY,

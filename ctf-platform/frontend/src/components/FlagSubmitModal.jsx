@@ -20,7 +20,7 @@ export default function FlagSubmitModal({ challenge, onClose, onSolved }) {
     setLoading(true)
     setStatus(null)
     try {
-      const { data } = await client.post('/submit', {
+      const { data } = await client.post('/submissions', {
         challenge_id: challenge.id,
         flag: flag.trim(),
       })

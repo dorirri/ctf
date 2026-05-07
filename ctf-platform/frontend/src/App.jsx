@@ -8,6 +8,7 @@ import Register from './pages/Register'
 import Challenges from './pages/Challenges'
 import Scoreboard from './pages/Scoreboard'
 import NotFound from './pages/NotFound'
+import AdminLogin from './pages/AdminLogin'
 import AdminLayout from './pages/admin/AdminLayout'
 import AdminChallenges from './pages/admin/AdminChallenges'
 import AdminSubmissions from './pages/admin/AdminSubmissions'
@@ -44,6 +45,9 @@ export default function App() {
           <Route path="/scoreboard" element={<Scoreboard />} />
           <Route path="*" element={<NotFound />} />
         </Route>
+
+        {/* Admin login — standalone, no navbar */}
+        <Route path="/admin/login" element={<AdminLogin />} />
 
         {/* Admin panel — full-page layout, no player navbar */}
         <Route
