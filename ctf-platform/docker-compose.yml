@@ -9,7 +9,7 @@ services:
       POSTGRES_PASSWORD: ctf
       POSTGRES_DB: ctfdb
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - ctf_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ctf -d ctfdb"]
       interval: 5s
@@ -31,5 +31,15 @@ services:
       db:
         condition: service_healthy
 
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
 volumes:
-  pgdata:
+  ctf_data:
