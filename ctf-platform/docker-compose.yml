@@ -27,6 +27,9 @@ services:
       PORT: "8080"
       DB_URL: "postgres://ctf:ctf@db:5432/ctfdb?sslmode=disable"
       JWT_SECRET: "${JWT_SECRET:-changeme}"
+      ADMIN_USERNAME: "${ADMIN_USERNAME:-admin}"
+      ADMIN_EMAIL: "${ADMIN_EMAIL:-admin@ctf.local}"
+      ADMIN_PASSWORD: "${ADMIN_PASSWORD:-admin123}"
     depends_on:
       db:
         condition: service_healthy
@@ -38,6 +41,8 @@ services:
     restart: unless-stopped
     ports:
       - "3000:80"
+    environment:
+      BACKEND_HOST: "backend:8080"
     depends_on:
       - backend
 
