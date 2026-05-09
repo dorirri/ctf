@@ -1,11 +1,13 @@
 export default function ChallengeCard({ challenge, onClick }) {
   return (
-    <div
+    <button
+      type="button"
       className={`challenge-card${challenge.is_solved ? ' solved' : ''}`}
       onClick={() => onClick(challenge)}
+      aria-label={`Open ${challenge.title || 'untitled challenge'}`}
     >
       <div className="card-header">
-        <span className="card-title">{challenge.title}</span>
+        <span className="card-title">{challenge.title || 'Untitled challenge'}</span>
         {challenge.is_solved && (
           <span className="card-solved-badge">SOLVED</span>
         )}
@@ -17,6 +19,6 @@ export default function ChallengeCard({ challenge, onClick }) {
           <span className="card-points-label"> pts</span>
         </span>
       </div>
-    </div>
+    </button>
   )
 }

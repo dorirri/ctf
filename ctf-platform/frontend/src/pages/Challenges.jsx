@@ -54,6 +54,17 @@ export default function Challenges() {
 
       {error && <div className="alert alert-error">{error}</div>}
 
+      {loading && (
+        <div className="challenge-grid loading-grid" aria-label="Loading challenges">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <div className="challenge-card challenge-card-skeleton" key={index}>
+              <span />
+              <span />
+            </div>
+          ))}
+        </div>
+      )}
+
       {!loading && !error && categories.length === 0 && (
         <div className="state-box">
           <span className="state-icon">[]</span>
