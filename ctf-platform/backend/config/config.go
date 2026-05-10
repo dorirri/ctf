@@ -11,7 +11,7 @@ type Config struct {
 func Load() *Config {
 	return &Config{
 		Port:      getEnv("PORT", "8080"),
-		DBURL:     getEnv("DB_URL", "postgres://ctf:ctf@db:5432/ctfdb?sslmode=disable"),
+		DBURL:     getEnv("DATABASE_URL", ""),
 		JWTSecret: getEnv("JWT_SECRET", "changeme"),
 	}
 }
